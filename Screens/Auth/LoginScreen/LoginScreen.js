@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   TouchableWithoutFeedback,
   Text,
   View,
   ImageBackground,
-  Image,
   TextInput,
   TouchableOpacity,
   Platform,
@@ -13,6 +12,9 @@ import {
   Dimensions,
 } from "react-native";
 
+import AuthContext from "../../../helpers/context/authContext";
+import MyButton from "../../../components/Button/MyButton";
+
 import styles from "../styles";
 
 const initialState = {
@@ -20,14 +22,14 @@ const initialState = {
   password: "",
 };
 
-export default LoginScreen = () => {
+export default LoginScreen = ({ navigation }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
-  const [isKeyboardShown, setIsKeyboardShown] = useState(false);
   const [state, setState] = useState(initialState);
   const [elOnFocus, setElOnFocus] = useState("");
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
+  const handleLoginSubmit = useContext(AuthContext);
 
   useEffect(() => {
     const onChange = () => {
@@ -40,16 +42,6 @@ export default LoginScreen = () => {
     };
   });
 
-  useEffect(() => {
-    const hideSubscription = Keyboard.addListener("keyboardWillHide", () => {
-      setIsKeyboardShown(false);
-    });
-
-    return () => {
-      hideSubscription.remove();
-    };
-  }, []);
-
   const handlePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
@@ -59,14 +51,15 @@ export default LoginScreen = () => {
   };
 
   const keyboardHide = () => {
-    setIsKeyboardShown(false);
     setElOnFocus("");
     Keyboard.dismiss();
   };
 
-  const handleRegistration = () => {
+  const onSubmit = () => {
     console.log(state);
     setState(initialState);
+    // Имитирует автоизацию пользователя
+    handleLoginSubmit(true);
   };
 
   return (
@@ -95,7 +88,6 @@ export default LoginScreen = () => {
                 }}
                 placeholder="Адрес электронной почты"
                 onFocus={() => {
-                  setIsKeyboardShown(true);
                   setElOnFocus("email");
                 }}
                 onBlur={() => {
@@ -115,7 +107,6 @@ export default LoginScreen = () => {
                   placeholder="Пароль"
                   secureTextEntry={isPasswordVisible}
                   onFocus={() => {
-                    setIsKeyboardShown(true);
                     setElOnFocus("password");
                   }}
                   onBlur={() => {
@@ -132,18 +123,20 @@ export default LoginScreen = () => {
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity
-                  style={styles.button}
-                  activeOpacity={0.8}
-                  onPress={handleRegistration}
-                >
-                  <Text style={styles.buttonText}>Войти</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.link} activeOpacity={0.8}>
-                  <Text style={styles.linkText}>
-                    Нет аккаунта? Зарегистрироваться
-                  </Text>
-                </TouchableOpacity>
+                <MyButton
+                  mainStyle={styles.button}
+                  opacity={0.8}
+                  func={onSubmit}
+                  textStyle={styles.buttonText}
+                  text={"Войти"}
+                />
+                <MyButton
+                  mainStyle={styles.link}
+                  opacity={0.3}
+                  func={() => navigation.navigate("Registration")}
+                  textStyle={styles.linkText}
+                  text={"Нет аккаунта? Зарегистрироваться"}
+                />
               </View>
             </View>
           </View>
