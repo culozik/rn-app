@@ -4,12 +4,16 @@ import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 
 import AuthContext from "./helpers/context/authContext";
 import { useRoute } from "./router";
 
 export default function App() {
+  const navigationRef = useNavigationContainerRef();
   const [isAuth, setIsAuth] = useState(false);
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/roboto/Roboto-Regular.ttf"),
@@ -27,7 +31,7 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
-  const routing = useRoute(isAuth);
+  const routing = useRoute(isAuth, navigationRef);
 
   if (!fontsLoaded) {
     return null;
@@ -36,7 +40,7 @@ export default function App() {
   return (
     <AuthContext.Provider value={setIsAuth}>
       <View style={styles.container} onLayout={onLayoutRootView}>
-        <NavigationContainer>{routing}</NavigationContainer>
+        <NavigationContainer ref={navigationRef}>{routing}</NavigationContainer>
       </View>
     </AuthContext.Provider>
   );

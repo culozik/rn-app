@@ -1,19 +1,64 @@
-import { View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Feather } from "@expo/vector-icons";
 
-const PostsScreen = () => {
+import DefaultPostsScreen from "./nestedScreens/DefaultPostsScreen";
+import CommentsScreen from "./nestedScreens/CommentsScreen";
+import MapScreen from "./nestedScreens/MapScreen";
+
+const NestedScreen = createStackNavigator();
+
+const PostsScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Text>PostsScreen</Text>
-    </View>
+    <NestedScreen.Navigator
+      screenOptions={{
+        // headerShown: false,
+        headerMode: "screen",
+      }}
+    >
+      <NestedScreen.Screen
+        options={{ headerTitle: "Публикации" }}
+        name="DefaultScreen"
+        component={DefaultPostsScreen}
+      />
+      <NestedScreen.Screen
+        name="Comments"
+        component={CommentsScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Комментарии",
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                style={{ marginLeft: 16 }}
+                onPress={() => navigation.goBack()}
+              >
+                <Feather name="arrow-left" size={24} color="#212121CC" />
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
+      <NestedScreen.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Карта",
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                style={{ marginLeft: 16 }}
+                onPress={() => navigation.goBack()}
+              >
+                <Feather name="arrow-left" size={24} color="#212121CC" />
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
+    </NestedScreen.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default PostsScreen;
