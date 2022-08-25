@@ -1,6 +1,8 @@
 import { useContext } from "react";
 
+import { TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Feather } from "@expo/vector-icons";
 
 import AuthContext from "../../helpers/context/authContext";
 
@@ -13,7 +15,7 @@ import tabBarIconFunc from "../../helpers/tabBarIcon/tabBarIconFunc";
 
 const MainTabNavigation = createBottomTabNavigator();
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigationRef }) => {
   const handleLogOutSubmit = useContext(AuthContext);
   return (
     <MainTabNavigation.Navigator
@@ -27,7 +29,8 @@ const HomeScreen = () => {
         name="Post"
         component={PostsScreen}
         options={{
-          headerTitle: "Публикации",
+          headerShown: false,
+
           tabBarIcon: ({ focused }) => {
             return tabBarIconFunc("grid", focused);
           },
@@ -44,6 +47,17 @@ const HomeScreen = () => {
           tabBarIcon: ({}) => {
             return tabBarIconFunc("create");
           },
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                style={{ marginLeft: 16 }}
+                onPress={() => navigationRef.goBack()}
+              >
+                <Feather name="arrow-left" size={24} color="#212121CC" />
+              </TouchableOpacity>
+            );
+          },
+          tabBarStyle: { display: "none" },
         }}
       />
       <MainTabNavigation.Screen

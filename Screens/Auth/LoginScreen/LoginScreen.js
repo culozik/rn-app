@@ -29,7 +29,7 @@ export default LoginScreen = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
-  const handleLoginSubmit = useContext(AuthContext);
+  const handleLogOutSubmit = useContext(AuthContext);
 
   useEffect(() => {
     const onChange = () => {
@@ -59,7 +59,7 @@ export default LoginScreen = ({ navigation }) => {
     console.log(state);
     setState(initialState);
     // Имитирует автоизацию пользователя
-    handleLoginSubmit(true);
+    handleLogOutSubmit(true);
   };
 
   return (
