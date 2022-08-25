@@ -1,8 +1,11 @@
+import { Provider } from "react-redux";
 import { useState, useEffect, useCallback, createContext } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+
+import store from "./redux/store";
 
 import {
   NavigationContainer,
@@ -38,11 +41,15 @@ export default function App() {
   }
 
   return (
-    <AuthContext.Provider value={setIsAuth}>
-      <View style={styles.container} onLayout={onLayoutRootView}>
-        <NavigationContainer ref={navigationRef}>{routing}</NavigationContainer>
-      </View>
-    </AuthContext.Provider>
+    <Provider store={store}>
+      <AuthContext.Provider value={setIsAuth}>
+        <View style={styles.container} onLayout={onLayoutRootView}>
+          <NavigationContainer ref={navigationRef}>
+            {routing}
+          </NavigationContainer>
+        </View>
+      </AuthContext.Provider>
+    </Provider>
   );
 }
 

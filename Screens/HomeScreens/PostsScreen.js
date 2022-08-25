@@ -1,23 +1,33 @@
+import { useContext } from "react";
 import { TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Feather } from "@expo/vector-icons";
 
+import AuthContext from "../../helpers/context/authContext";
+
 import DefaultPostsScreen from "./nestedScreens/DefaultPostsScreen";
 import CommentsScreen from "./nestedScreens/CommentsScreen";
 import MapScreen from "./nestedScreens/MapScreen";
+import LogOutBtn from "../../components/LogOutBtn";
 
 const NestedScreen = createStackNavigator();
 
 const PostsScreen = ({ navigation }) => {
+  const handleLogOutSubmit = useContext(AuthContext);
   return (
     <NestedScreen.Navigator
       screenOptions={{
-        // headerShown: false,
+        headerTitleAlign: "center",
         headerMode: "screen",
       }}
     >
       <NestedScreen.Screen
-        options={{ headerTitle: "Публикации" }}
+        options={{
+          headerTitle: "Публикации",
+          headerRight: () => {
+            return <LogOutBtn onLogout={handleLogOutSubmit} />;
+          },
+        }}
         name="DefaultScreen"
         component={DefaultPostsScreen}
       />
