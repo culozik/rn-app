@@ -1,22 +1,16 @@
-import { useContext } from "react";
-
 import { TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
-
-import AuthContext from "../../helpers/context/authContext";
 
 import CreatePostsScreen from "./CreatePostsScreen";
 import PostsScreen from "./PostsScreen";
 import ProfileScreen from "./ProfileScreen";
 
-import LogOutBtn from "../../components/LogOutBtn";
 import tabBarIconFunc from "../../helpers/tabBarIcon/tabBarIconFunc";
 
 const MainTabNavigation = createBottomTabNavigator();
 
 const HomeScreen = ({ navigationRef }) => {
-  const handleLogOutSubmit = useContext(AuthContext);
   return (
     <MainTabNavigation.Navigator
       initialRouteName="Post"
@@ -30,12 +24,8 @@ const HomeScreen = ({ navigationRef }) => {
         component={PostsScreen}
         options={{
           headerShown: false,
-
           tabBarIcon: ({ focused }) => {
             return tabBarIconFunc("grid", focused);
-          },
-          headerRight: () => {
-            return <LogOutBtn onLogout={handleLogOutSubmit} />;
           },
         }}
       />

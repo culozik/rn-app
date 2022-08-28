@@ -1,16 +1,26 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { View, Image, Text, StyleSheet, FlatList } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import db from "../../../firebase/config";
 
-const DefaultPostsScreen = ({ navigation, route }) => {
+const DefaultPostsScreen = ({ navigation }) => {
+  const { email, nickName } = useSelector((state) => state.auth);
   const [posts, setPosts] = useState([]);
-  const { params } = route;
+
+  const getPosts = async () => {
+    await db
+      .firestore()
+      .collection("posts")
+      .onSnapshot((data) =>
+        setPosts(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+  };
 
   useEffect(() => {
-    if (params) {
-      setPosts((prevState) => [...prevState, params]);
-    }
-  }, [params]);
+    getPosts();
+    console.log(posts);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -19,16 +29,16 @@ const DefaultPostsScreen = ({ navigation, route }) => {
           source={require("../../../assets/images/blank-profile-picture-g0fd59bf85_1280.png")}
           style={styles.userImage}
         />
-        <Text style={styles.userName}>User Name</Text>
-        <Text style={styles.userEmail}>User Email</Text>
+        <Text style={styles.userName}>{nickName}</Text>
+        <Text style={styles.userEmail}>{email}</Text>
       </View>
       <FlatList
         data={posts}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.post}>
-            <Image source={{ uri: item.image }} style={styles.postImage} />
-            <Text style={styles.postTitle}>{item.imageTitle}</Text>
+            <Image source={{ uri: item.imageUri }} style={styles.postImage} />
+            <Text style={styles.postTitle}>{item.postData.title}</Text>
             <View style={styles.lowerWrapper}>
               <View style={styles.locationWrapper}>
                 <Feather
@@ -36,7 +46,12 @@ const DefaultPostsScreen = ({ navigation, route }) => {
                   size={24}
                   color="#BDBDBD"
                   style={styles.commentIcon}
-                  onPress={() => navigation.navigate("Comments")}
+                  onPress={() =>
+                    navigation.navigate("Comments", {
+                      postId: item.id,
+                      imageUri: item.imageUri,
+                    })
+                  }
                 />
                 <Text style={styles.commentCount}>0</Text>
               </View>
@@ -49,11 +64,13 @@ const DefaultPostsScreen = ({ navigation, route }) => {
                   onPress={() =>
                     navigation.navigate("Map", {
                       coordinates: item.location,
-                      title: item.imageTitle,
+                      title: item.postData.title,
                     })
                   }
                 />
-                <Text style={styles.postLocation}>{item.imageLocation}</Text>
+                <Text style={styles.postLocation}>
+                  {item.postData.location}
+                </Text>
               </View>
             </View>
           </View>

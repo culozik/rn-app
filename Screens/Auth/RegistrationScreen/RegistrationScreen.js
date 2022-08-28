@@ -12,6 +12,9 @@ import {
   Keyboard,
   Dimensions,
 } from "react-native";
+import { useDispatch } from "react-redux";
+
+import { authSignUpUser } from "../../../redux/auth/authOperations";
 
 import MyButton from "../../../components/Button/MyButton";
 
@@ -30,6 +33,8 @@ export default RegistrationPage = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const onChange = () => {
@@ -57,7 +62,7 @@ export default RegistrationPage = ({ navigation }) => {
 
   const handleRegistration = () => {
     console.log(state);
-    setState(initialState);
+    dispatch(authSignUpUser(state));
   };
 
   return (

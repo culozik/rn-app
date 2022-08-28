@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   TouchableWithoutFeedback,
   View,
@@ -13,6 +14,9 @@ import {
 import * as Location from "expo-location";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import { Camera } from "expo-camera";
+import shortid from "shortid";
+
+import db from "../../firebase/config";
 
 import MyButton from "../../components/Button/MyButton";
 
@@ -28,6 +32,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [postSandStatus, setPostSandStatus] = useState(false);
+  const { userId, nickName } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async () => {
@@ -48,18 +53,41 @@ const CreatePostsScreen = ({ navigation }) => {
     setImage(photo.uri);
   };
 
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(image);
+    const file = await response.blob();
+
+    const uniquePostId = shortid.generate().toString();
+    await db.storage().ref(`postsImages/${uniquePostId}`).put(file);
+    const processImage = await db
+      .storage()
+      .ref("postsImages")
+      .child(uniquePostId)
+      .getDownloadURL();
+
+    return processImage;
+  };
+
+  const uploadPostToServer = async (location) => {
+    const photo = await uploadPhotoToServer();
+    await db.firestore().collection("posts").add({
+      imageUri: photo,
+      postData: state,
+      location,
+      userId,
+      author: nickName,
+      comments: [],
+    });
+  };
+
   const publishPost = async () => {
     let location;
     try {
       setPostSandStatus(true);
       location = await Location.getCurrentPositionAsync();
+      uploadPostToServer(location.coords);
       setPostSandStatus(false);
-      navigation.navigate("DefaultScreen", {
-        image,
-        location,
-        imageTitle: state.title,
-        imageLocation: state.location,
-      });
+      navigation.navigate("DefaultScreen");
       setImage("");
       setState(initialState);
     } catch (error) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import {
   TouchableWithoutFeedback,
   Text,
@@ -11,8 +11,10 @@ import {
   Keyboard,
   Dimensions,
 } from "react-native";
+import { useDispatch } from "react-redux";
 
-import AuthContext from "../../../helpers/context/authContext";
+import { authSignInUser } from "../../../redux/auth/authOperations";
+
 import MyButton from "../../../components/Button/MyButton";
 
 import styles from "../styles";
@@ -29,7 +31,8 @@ export default LoginScreen = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
-  const handleLogOutSubmit = useContext(AuthContext);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const onChange = () => {
@@ -57,9 +60,7 @@ export default LoginScreen = ({ navigation }) => {
 
   const onSubmit = () => {
     console.log(state);
-    setState(initialState);
-    // Имитирует автоизацию пользователя
-    handleLogOutSubmit(true);
+    dispatch(authSignInUser(state));
   };
 
   return (

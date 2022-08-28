@@ -5,19 +5,25 @@ import { Feather } from "@expo/vector-icons";
 import DefaultPostsScreen from "./nestedScreens/DefaultPostsScreen";
 import CommentsScreen from "./nestedScreens/CommentsScreen";
 import MapScreen from "./nestedScreens/MapScreen";
+import LogOutBtn from "../../components/LogOutBtn";
 
 const NestedScreen = createStackNavigator();
 
-const PostsScreen = ({ navigation }) => {
+const PostsScreen = ({ navigation, route }) => {
   return (
     <NestedScreen.Navigator
       screenOptions={{
-        // headerShown: false,
+        headerTitleAlign: "center",
         headerMode: "screen",
       }}
     >
       <NestedScreen.Screen
-        options={{ headerTitle: "Публикации" }}
+        options={{
+          headerTitle: "Публикации",
+          headerRight: () => {
+            return <LogOutBtn />;
+          },
+        }}
         name="DefaultScreen"
         component={DefaultPostsScreen}
       />
